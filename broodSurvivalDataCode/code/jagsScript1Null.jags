@@ -1,0 +1,22 @@
+model{
+
+#likelihood~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   for (i in 1:nObs) {
+     y[i] ~ dbern(p[i])
+     logit(p[i]) <- beta + eps[id[i]] 
+   }
+   
+#priors~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+  #intercept
+  beta ~ dunif(0, 1) 
+
+  #random effect of id to account for auto correlation
+  for(i in 1:nIDs){
+    eps[i] ~ dnorm(0, tauID)
+  }
+  sigmaID ~ dunif(0, 10)
+  tauID <- 1 / (sigmaID * sigmaID)
+
+}

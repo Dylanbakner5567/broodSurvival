@@ -1,0 +1,27 @@
+model{
+
+#likelihood~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   for (i in 1:nObs) {
+     y[i] ~ dbern(p[i])
+     logit(p[i]) <- beta[day[i]] + eps[id[i]] 
+   }
+   
+#priors~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   
+  #auto-regressive term for modeling day
+  beta[1] ~ dunif(0, 1) 
+  sigma ~ dunif(0,1)
+  tau = pow(sigma, -2)
+  for (i in 2:28){
+    beta[i] ~ dnorm(beta[i-1], tau)
+  }
+
+  #random effect of id to account for auto correlation
+  for(i in 1:nIDs){
+    eps[i] ~ dnorm(0, tauID)
+  }
+  sigmaID ~ dunif(0, 5)
+  tauID <- 1 / (sigmaID * sigmaID)
+
+}
