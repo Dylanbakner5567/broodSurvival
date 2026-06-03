@@ -22,19 +22,29 @@ model {
 
 #priors and constraints~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+#priors and constraints~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 #auto-regressive survival at revisited sites (ground)
-phiA[1] ~ dunif(0, 1) 
+phiA[1] ~ dunif(0, 1)
 sigmaG ~ dunif(0, 1) 
 tauG = pow(sigmaG, -2)
-for (j in 2:13){
+for (j in 2:9){
   phiA[j] ~ dnorm(phiA[j-1], tauG)
 }
 
+#auto-regressive survival at revisited sites (ground-tree)
+phiA[10] ~ dunif(0, 1)
+sigmaGT ~ dunif(0, 1) 
+tauGT = pow(sigmaGT, -2)
+for (j in 11:14){
+  phiA[j] ~ dnorm(phiA[j-1], tauGT)
+}
+
 #auto-regressive survival at revisited sites (tree)
-phiA[14] ~ dunif(0, 1) 
+phiA[15] ~ dunif(0, 1) 
 sigmaT ~ dunif(0, 1) 
 tauT = pow(sigmaT, -2)
-for (j in 15:27){
+for (j in 16:27){
   phiA[j] ~ dnorm(phiA[j-1], tauT)
 }
 
@@ -42,15 +52,23 @@ for (j in 15:27){
 phiB[1] ~ dunif(0, 1) 
 sigma2G ~ dunif(0, 1) 
 tau2G = pow(sigma2G, -2)
-for (j in 2:13){
+for (j in 2:9){
   phiB[j] ~ dnorm(phiB[j-1], tau2G)
 }
 
+#auto-regressive survival at new sites (ground-tree)
+phiB[10] ~ dunif(0, 1) 
+sigma2GT ~ dunif(0, 1) 
+tau2GT = pow(sigma2GT, -2)
+for (j in 11:14){
+  phiB[j] ~ dnorm(phiB[j-1], tau2GT)
+}
+
 #auto-regressive survival at new sites (tree)
-phiB[14] ~ dunif(0, 1) 
+phiB[15] ~ dunif(0, 1) 
 sigma2T ~ dunif(0, 1) 
 tau2T = pow(sigma2T, -2)
-for (j in 15:27){
+for (j in 16:27){
   phiB[j] ~ dnorm(phiB[j-1], tau2T)
 }
 
@@ -58,15 +76,23 @@ for (j in 15:27){
 psiAB[1] ~ dunif(0, 1) 
 sigma3G ~ dunif(0, 1) 
 tau3G = pow(sigma3G, -2)
-for (j in 2:13){
+for (j in 2:9){
   psiAB[j] ~ dnorm(psiAB[j-1], tau3G)
 }
 
+#auto-regressive transition from revisited sites to new sites (ground-tree)
+psiAB[10] ~ dunif(0, 1) 
+sigma3GT ~ dunif(0, 1) 
+tau3GT = pow(sigma3GT, -2)
+for (j in 11:14){
+  psiAB[j] ~ dnorm(psiAB[j-1], tau3GT)
+}
+
 #auto-regressive transition from revisited sites to new sites (tree)
-psiAB[14] ~ dunif(0, 1) 
+psiAB[15] ~ dunif(0, 1) 
 sigma3T ~ dunif(0, 1) 
 tau3T = pow(sigma3T, -2)
-for (j in 15:27){
+for (j in 16:27){
   psiAB[j] ~ dnorm(psiAB[j-1], tau3T)
 }
 
@@ -74,15 +100,23 @@ for (j in 15:27){
 psiBA[1] ~ dunif(0, 1) 
 sigma4G ~ dunif(0, 1) 
 tau4G = pow(sigma4G, -2)
-for (j in 2:13){
+for (j in 2:9){
   psiBA[j] ~ dnorm(psiBA[j-1], tau4G)
 }
 
+#auto-regressive transition from new sites to revisit sites (ground-tree)
+psiBA[10] ~ dunif(0, 1) 
+sigma4GT ~ dunif(0, 1) 
+tau4GT = pow(sigma4GT, -2)
+for (j in 11:14){
+  psiBA[j] ~ dnorm(psiBA[j-1], tau4GT)
+}
+
 #auto-regressive transition from new sites to revisit sites (tree)
-psiBA[14] ~ dunif(0, 1) 
+psiBA[15] ~ dunif(0, 1) 
 sigma4T ~ dunif(0, 1) 
 tau4T = pow(sigma4T, -2)
-for (j in 15:27){
+for (j in 16:27){
   psiBA[j] ~ dnorm(psiBA[j-1], tau4T)
 }
 

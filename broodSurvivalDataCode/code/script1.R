@@ -2,17 +2,17 @@
 #packages
 library(jagsUI)
 
-#set working directory to load in jags data below
-setwd('/data/')
+#set working directory to load in jags data
+setwd('C:/Users/dylan.bakner/Documents/manuscripts/turkeyBroodSurvival/submissionDocs/data/')
 
 #read in jags data
 jags.data1 <- readRDS("jags.data1.rds")
 
 #set working directory to read in jags scripts
-setwd('/code')
+setwd('C:/Users/dylan.bakner/Documents/manuscripts/turkeyBroodSurvival/submissionDocs/code')
 
 #parameters monitored
-parameters <- c("beta", "sigmaID")
+parameters <- c("alpha", "beta", "beta1", "sigmaID")
 
 #mcmc settings
 ni <- 50000
@@ -46,8 +46,14 @@ m1Null <- jags(jags.data1,
 
 #view results
 plogis(summary(m1, digits = 3))
-plogis(summary(m1Null, digits = 3))
+summary(m1Null, digits = 3)
 
 #difference in sd
-plogis(m1$mean$sigmaID)
-plogis(m1Null$mean$sigmaID)
+m1$mean$sigmaID
+m1Null$mean$sigmaID
+
+#save r environment 
+save.image("C:/Users/dylan.bakner/Documents/manuscripts/turkeyBroodSurvival/submissionDocs/output/enviroments/script1Enviroment.RData")
+
+
+

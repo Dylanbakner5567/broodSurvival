@@ -2,14 +2,14 @@
 #packages
 library(jagsUI)
 
-#set working directory to load in jags data below
-setwd('/data/')
+#set working directory to load in jags data
+setwd('C:/Users/dylan.bakner/Documents/manuscripts/turkeyBroodSurvival/submissionDocs/data/')
 
 #read in jags data
 jags.data3 <- readRDS("jags.data3.rds")
 
 #set working directory to read in jags scripts
-setwd('/code/')
+setwd('C:/Users/dylan.bakner/Documents/manuscripts/turkeyBroodSurvival/submissionDocs/code')
 
 #function to create initial values for unknown z
 ms.init.z <- function(ch, f){
@@ -37,3 +37,6 @@ nc <- 4
 #call jags from r
 m3 <- jags(jags.data3, inits, parameters, "jagsScript2.jags", n.chains = nc, n.thin = nt, n.iter = ni, n.burnin = nb, parallel = TRUE)
 print(m3, digits = 3)
+
+#save r environment 
+save.image("C:/Users/dylan.bakner/Documents/manuscripts/turkeyBroodSurvival/submissionDocs/output/enviroments/script3Enviroment.RData")
