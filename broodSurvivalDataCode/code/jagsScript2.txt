@@ -1,0 +1,137 @@
+
+model {
+
+# -------------------------------------------------
+#parameters:
+#phiA: survival probability at revisit sites
+#phiB: survival probability at new sites
+#psiAB: movement probability from revisit sites to new sites
+#psiBA: movement probability from new sites to revisit sites
+#pA: recapture probability at revisit sites
+#pB: recapture probability at new sites
+# -------------------------------------------------
+
+#priors and constraints~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#auto-regressive survival at revisited sites (ground)
+phiA[1] ~ dunif(0, 1)
+sigmaG ~ dunif(0, 1) 
+tauG = pow(sigmaG, -2)
+for (j in 2:9){
+  phiA[j] ~ dnorm(phiA[j-1], tauG)
+}
+
+#auto-regressive survival at revisited sites (ground-tree)
+phiA[10] ~ dunif(0, 1)
+sigmaGT ~ dunif(0, 1) 
+tauGT = pow(sigmaGT, -2)
+for (j in 11:14){
+  phiA[j] ~ dnorm(phiA[j-1], tauGT)
+}
+
+#auto-regressive survival at revisited sites (tree)
+phiA[15] ~ dunif(0, 1) 
+sigmaT ~ dunif(0, 1) 
+tauT = pow(sigmaT, -2)
+for (j in 16:27){
+  phiA[j] ~ dnorm(phiA[j-1], tauT)
+}
+
+#auto-regressive survival at new sites (ground)
+phiB[1] ~ dunif(0, 1) 
+sigma2G ~ dunif(0, 1) 
+tau2G = pow(sigma2G, -2)
+for (j in 2:9){
+  phiB[j] ~ dnorm(phiB[j-1], tau2G)
+}
+
+#auto-regressive survival at new sites (ground-tree)
+phiB[10] ~ dunif(0, 1) 
+sigma2GT ~ dunif(0, 1) 
+tau2GT = pow(sigma2GT, -2)
+for (j in 11:14){
+  phiB[j] ~ dnorm(phiB[j-1], tau2GT)
+}
+
+#auto-regressive survival at new sites (tree)
+phiB[15] ~ dunif(0, 1) 
+sigma2T ~ dunif(0, 1) 
+tau2T = pow(sigma2T, -2)
+for (j in 16:27){
+  phiB[j] ~ dnorm(phiB[j-1], tau2T)
+}
+
+#auto-regressive transition from revisited sites to new sites (ground)
+psiAB[1] ~ dunif(0, 1) 
+sigma3G ~ dunif(0, 1) 
+tau3G = pow(sigma3G, -2)
+for (j in 2:9){
+  psiAB[j] ~ dnorm(psiAB[j-1], tau3G)
+}
+
+#auto-regressive transition from revisited sites to new sites (ground-tree)
+psiAB[10] ~ dunif(0, 1) 
+sigma3GT ~ dunif(0, 1) 
+tau3GT = pow(sigma3GT, -2)
+for (j in 11:14){
+  psiAB[j] ~ dnorm(psiAB[j-1], tau3GT)
+}
+
+#auto-regressive transition from revisited sites to new sites (tree)
+psiAB[15] ~ dunif(0, 1) 
+sigma3T ~ dunif(0, 1) 
+tau3T = pow(sigma3T, -2)
+for (j in 16:27){
+  psiAB[j] ~ dnorm(psiAB[j-1], tau3T)
+}
+
+#auto-regressive transition from new sites to revisit sites (ground)
+psiBA[1] ~ dunif(0, 1) 
+sigma4G ~ dunif(0, 1) 
+tau4G = pow(sigma4G, -2)
+for (j in 2:9){
+  psiBA[j] ~ dnorm(psiBA[j-1], tau4G)
+}
+
+#auto-regressive transition from new sites to revisit sites (ground-tree)
+psiBA[10] ~ dunif(0, 1) 
+sigma4GT ~ dunif(0, 1) 
+tau4GT = pow(sigma4GT, -2)
+for (j in 11:14){
+  psiBA[j] ~ dnorm(psiBA[j-1], tau4GT)
+}
+
+#auto-regressive transition from new sites to revisit sites (tree)
+psiBA[15] ~ dunif(0, 1) 
+sigma4T ~ dunif(0, 1) 
+tau4T = pow(sigma4T, -2)
+for (j in 16:27){
+  psiBA[j] ~ dnorm(psiBA[j-1], tau4T)
+}
+
+
+#define state-transition and observation matrices
+for (i in 1:nind){  
+   #define probabilities of state s(t+1) given s(t)
+   for (t in f[i]:(n.occasions-1)){
+      ps[1,i,t,1] <- phiA[t] * (1-psiAB[t])
+      ps[1,i,t,2] <- phiA[t] * psiAB[t]
+      ps[1,i,t,3] <- 1-phiA[t]
+      ps[2,i,t,1] <- phiB[t] * psiBA[t]
+      ps[2,i,t,2] <- phiB[t] * (1-psiBA[t])
+      ps[2,i,t,3] <- 1-phiB[t]
+      ps[3,i,t,1] <- 0
+      ps[3,i,t,2] <- 0
+      ps[3,i,t,3] <- 1
+      } #t
+   } #i
+
+#likelihood 
+for (i in 1:nind){
+   #define latent state at first capture
+   for (t in (f[i]+1):n.occasions){
+      #state process: draw s(t) given s(t-1)
+      y[i,t] ~ dcat(ps[y[i,t-1], i, t-1,])
+      } #t
+   } #i
+}
